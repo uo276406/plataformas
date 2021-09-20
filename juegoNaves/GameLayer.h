@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Background.h"
 #include "Enemy.h"
+#include "Projectile.h"
 
 #include <list>
 
@@ -18,6 +19,7 @@ public:
 	void keysToControls(SDL_Event event);
 
 	list<Enemy*> enemies;
+	list<Projectile*> projectiles;
 
 	Player* player;
 	Background* background;
