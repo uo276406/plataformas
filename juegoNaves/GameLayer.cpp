@@ -28,10 +28,6 @@ void GameLayer::processControls() {
 	//procesar controles
 	// Disparar
 	if (controlShoot) {
-		Projectile* newProjectile = player->shoot();
-		if (newProjectile != NULL) {
-			projectiles.push_back(newProjectile);
-		}
 
 	}
 
@@ -64,9 +60,6 @@ void GameLayer::keysToControls(SDL_Event event) {
 		int code = event.key.keysym.sym;
 		// Pulsada
 		switch (code) {
-		case SDLK_ESCAPE:
-			game->loopActive = false;
-			break;
 		case SDLK_d: // derecha
 			controlMoveX = 1;
 			break;
@@ -119,18 +112,7 @@ void GameLayer::keysToControls(SDL_Event event) {
 }
 
 void GameLayer::update() {
-
-	// Generar enemigos
-	newEnemyTime--;
-	if (newEnemyTime <= 0) {
-		int rX = (rand() % (600 - 500)) + 1 + 500;
-		int rY = (rand() % (300 - 60)) + 1 + 60;
-		enemies.push_back(new Enemy(rX, rY, game));
-		newEnemyTime = 110;
-	}
-
 	player->update();
-	
 	for (auto const& enemy : enemies) {
 		enemy->update();
 	}
@@ -146,47 +128,6 @@ void GameLayer::update() {
 			return; // Cortar el for
 		}
 	}
-
-	// Colisiones , Enemy - Projectile
-
-	list<Enemy*> deleteEnemies;
-	list<Projectile*> deleteProjectiles;
-
-	for (auto const& enemy : enemies) {
-		for (auto const& projectile : projectiles) {
-			if (enemy->isOverlap(projectile)) {
-				bool pInList = std::find(deleteProjectiles.begin(),
-					deleteProjectiles.end(),
-					projectile) != deleteProjectiles.end();
-
-				if (!pInList) {
-					deleteProjectiles.push_back(projectile);
-				}
-
-				bool eInList = std::find(deleteEnemies.begin(),
-					deleteEnemies.end(),
-					enemy) != deleteEnemies.end();
-
-				if (!eInList) {
-					deleteEnemies.push_back(enemy);
-				}
-
-			}
-		}
-	}
-
-	for (auto const& delEnemy : deleteEnemies) {
-		enemies.remove(delEnemy);
-	}
-	deleteEnemies.clear();
-
-	for (auto const& delProjectile : deleteProjectiles) {
-		projectiles.remove(delProjectile);
-	}
-	deleteProjectiles.clear();
-
-
-
 }
 
 
