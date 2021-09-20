@@ -12,6 +12,7 @@ public:
 	virtual void update() = 0;
 	virtual void draw() = 0;
 
+	//Motor del juego
 	Game* game;
 };
 
