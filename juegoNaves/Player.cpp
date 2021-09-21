@@ -5,7 +5,23 @@ Player::Player(float x, float y, Game* game)
 
 }
 
+Projectile* Player::shoot() {
+	if (shootTime == 0) {
+		shootTime = shootCadence;
+		return new Projectile(x, y, game);
+	}
+	else {
+		return NULL;
+	}
+}
+
+
 void Player::update() {
+
+	if (shootTime > 0) {
+		shootTime--;
+	}
+
 	x = x + vx;
 	y = y + vy;
 }

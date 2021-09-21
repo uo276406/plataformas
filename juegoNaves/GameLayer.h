@@ -17,6 +17,7 @@ public:
 	void update() override;
 	void draw() override;
 	void keysToControls(SDL_Event event);
+	int newEnemyTime = 0;
 
 	list<Enemy*> enemies;
 	list<Projectile*> projectiles;
