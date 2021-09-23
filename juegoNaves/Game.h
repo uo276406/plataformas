@@ -22,6 +22,9 @@ public:
 	void loop();
 
 	void scale();
+
+	TTF_Font* font;
+
 	bool scaledToMax = false;
 	float scaleLower = 1;
 
