@@ -2,6 +2,7 @@
 
 #include "Actor.h"
 #include "Projectile.h" 
+#include "Animation.h"
 
 class Player : public Actor
 {
@@ -16,6 +17,19 @@ public:
 	int shootCadence = 30;
 	int shootTime = 0;
 
+	void draw() override; // Va a sobrescribir
+	Animation* aIdleRight;
+	Animation* aIdleLeft;
+	Animation* aRunningRight;
+	Animation* aRunningLeft;
+	Animation* aShootingRight;
+	Animation* aShootingLeft;
+
+	int state;
+
+	int orientation;
+
+	Animation* animation; // Referencia a la animación mostrada
 
 };
 
