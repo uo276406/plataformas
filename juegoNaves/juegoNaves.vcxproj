@@ -24,6 +24,7 @@
     <ProjectGuid>{1b2bd574-eeab-493d-84b0-f9cc15220a60}</ProjectGuid>
     <RootNamespace>juegoNaves</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>plataformas</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
