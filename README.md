@@ -1,2 +1,2 @@
-# juegoNaves
-Desarrollo de un juego de naves para SEV
+# plataformas
+Desarrollo de un juego de plataformas para SEV
