@@ -1,0 +1,20 @@
+﻿  Player.cpp
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(10,10): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(10,3): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(12,10): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(12,3): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(13,68): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(13,61): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(15,69): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(15,62): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(17,76): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(17,69): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(19,77): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(19,70): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(34,46): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(34,43): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(97,8): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(98,8): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(110,21): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\plataformas\Player.cpp(110,18): warning C4244: 'argumento': conversión de 'int' a 'float'; posible pérdida de datos
+  plataformas.vcxproj -> C:\Users\diego\OneDrive\Escritorio\SEV\plataformas\Debug\plataformas.exe

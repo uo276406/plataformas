@@ -38,15 +38,15 @@ bool Animation::update() {
 		// Actualizar el frame
 		currentFrame++;
 		// Si lleva al ultimo frame vuelve al primero
-		if (currentFrame >= totalFrames) {
-			currentFrame = 0;
-			if (loop == false) {
-				// No es infinita
-				// Indicar que finalizó 
-				return true;
-			}
-
+		if (loop == false) {
+			// No es infinita
+			// Indicar que finalizó 
+			return true;
 		}
+		else {
+			currentFrame = 0;
+		}
+
 	}
 	//Actualizar el rectangulo del source (siguiente frame)
 	source.x = currentFrame * frameWidth;
