@@ -1,9 +1,10 @@
 #include "Text.h"
 
-Text::Text(string content, float x, float y, Game* game)
-	:content(content), x(x), y(y), game(game)
-{	
-
+Text::Text(string content, float x, float y, Game* game) {
+	this->content = content;
+	this->x = x;
+	this->y = y;
+	this->game = game;
 }
 
 void Text::draw() {
@@ -23,9 +24,7 @@ void Text::draw() {
 	rect.w = surface->w;
 	rect.h = surface->h;
 
-	//Se limpia la superficie de memoria
 	SDL_FreeSurface(surface);
 	SDL_RenderCopy(game->renderer, texture, NULL, &rect);
 	SDL_DestroyTexture(texture);
 }
-

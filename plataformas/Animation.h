@@ -28,4 +28,3 @@ public:
 	int updateTime = 0;
 };
 
-
