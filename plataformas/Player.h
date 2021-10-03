@@ -25,9 +25,9 @@ public:
 	Animation* aShootingRight;
 	Animation* aShootingLeft;
 
-	States state;
+	int state;
 
-	Orientation orientation;
+	int orientation;
 
 	Animation* animation; // Referencia a la animación mostrada
 

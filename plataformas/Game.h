@@ -34,6 +34,15 @@ public:
 
 	Layer* gameLayer;
 
+	int const stateMoving = 1;
+	int const stateJumping = 2;
+	int const stateDying = 3;
+	int const stateDead = 4;
+	int const stateShooting = 5;
+
+	int const orientationRight = 1;
+	int const orientationLeft = 2;
+
 };
 
 enum class States {
