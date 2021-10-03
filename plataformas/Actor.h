@@ -6,11 +6,11 @@ class Actor
 {
 public:
 	Actor(string filename, float x, float y, int width, int height, Game* game);
-	
 	~Actor();
-	
-	virtual void draw();
+	virtual void draw(float scrollX = 0);
 	bool isOverlap(Actor* actor);
+	bool isInRender(float scrollX = 0);
+	bool collisionDown;
 	SDL_Texture* texture;
 	int x;
 	int y;
@@ -21,7 +21,5 @@ public:
 	int fileWidth;
 	int fileHeight;
 	Game* game; // referencia al juego
-
-	bool isInRender();
 };
 

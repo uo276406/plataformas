@@ -6,25 +6,87 @@ GameLayer::GameLayer(Game* game)
 	init();
 }
 
+
 void GameLayer::init() {
+	space = new Space(1);
+	scrollX = 0;
+	tiles.clear();
 
-	//Puntos
+	audioBackground = new Audio("res/musica_ambiente.mp3", true);
+	audioBackground->play();
+
 	points = 0;
-	textPoints = new Text("0", WIDTH * 0.90, HEIGHT * 0.05, game);
+	textPoints = new Text("hola", WIDTH * 0.92, HEIGHT * 0.04, game);
+	textPoints->content = to_string(points);
 
-	player = new Player(50, 50, game);
-	background = new Background("res/fondo_2.png", WIDTH * 0.5, HEIGHT * 0.5, game);
-	backgroundPoints = new Actor("res/icono_puntos.png",WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
-
-
-	projectiles.clear(); //Vaciar por si reiniciamos el juego
+	
+	background = new Background("res/fondo_2.png", WIDTH * 0.5, HEIGHT * 0.5, -1, game);
+	backgroundPoints = new Actor("res/icono_puntos.png",
+		WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
 
 	enemies.clear(); // Vaciar por si reiniciamos el juego
-	enemies.push_back(new Enemy(300, 50, game));
-	enemies.push_back(new Enemy(300, 200, game));
+	projectiles.clear(); // Vaciar por si reiniciamos el juego
 
-
+	loadMap("res/0.txt");
 }
+
+void GameLayer::loadMap(string name) {
+	char character;
+	string line;
+	ifstream streamFile(name.c_str());
+	if (!streamFile.is_open()) {
+		cout << "Falla abrir el fichero de mapa" << endl;
+		return;
+	}
+	else {
+		// Por línea
+		for (int i = 0; getline(streamFile, line); i++) {
+			istringstream streamLine(line);
+			mapWidth = line.length() * 40; // Ancho del mapa en pixels
+			// Por carácter (en cada línea)
+			for (int j = 0; !streamLine.eof(); j++) {
+				streamLine >> character; // Leer character 
+				cout << character;
+				float x = 40 / 2 + j * 40; // x central
+				float y = 32 + i * 32; // y suelo
+				loadMapObject(character, x, y);
+			}
+
+			cout << character << endl;
+		}
+	}
+	streamFile.close();
+}
+
+void GameLayer::loadMapObject(char character, float x, float y)
+{
+	switch (character) {
+	case 'E': {
+		Enemy* enemy = new Enemy(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		enemy->y = enemy->y - enemy->height / 2;
+		enemies.push_back(enemy);
+		space->addDynamicActor(enemy);
+		break;
+	}
+	case '1': {
+		player = new Player(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		player->y = player->y - player->height / 2;
+		space->addDynamicActor(player);
+		break;
+	}
+	case '#': {
+		Tile* tile = new Tile("res/bloque_tierra.png", x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		tile->y = tile->y - tile->height / 2;
+		tiles.push_back(tile);
+		space->addStaticActor(tile);
+		break;
+	}
+	}
+}
+
 
 void GameLayer::processControls() {
 	// obtener controles
@@ -33,10 +95,12 @@ void GameLayer::processControls() {
 		keysToControls(event);
 	}
 	//procesar controles
+	//procesar controles
 	// Disparar
 	if (controlShoot) {
 		Projectile* newProjectile = player->shoot();
 		if (newProjectile != NULL) {
+			space->addDynamicActor(newProjectile);
 			projectiles.push_back(newProjectile);
 		}
 
@@ -55,15 +119,153 @@ void GameLayer::processControls() {
 
 	// Eje Y
 	if (controlMoveY > 0) {
-		player->moveY(1);
+	
 	}
 	else if (controlMoveY < 0) {
-		player->moveY(-1);
+		player->jump();
 	}
 	else {
-		player->moveY(0);
+
 	}
 
+
+
+}
+
+void GameLayer::update() {
+	// Jugador se cae
+	if (player->y > HEIGHT + 80) {
+		init();
+	}
+
+	space->update();
+	background->update();
+	player->update();
+	for (auto const& enemy : enemies) {
+		enemy->update();
+	}
+	for (auto const& projectile : projectiles) {
+		projectile->update();
+	}
+
+
+	// Colisiones
+	for (auto const& enemy : enemies) {
+		if (player->isOverlap(enemy)) {
+			player->loseLife();
+			if (player->lifes <= 0) {
+				init();
+				return;
+			}
+		}
+	}
+
+	// Colisiones , Enemy - Projectile
+
+	list<Enemy*> deleteEnemies;
+	list<Projectile*> deleteProjectiles;
+	for (auto const& projectile : projectiles) {
+		if (projectile->isInRender(scrollX) == false || projectile->vx == 0) {
+
+			bool pInList = std::find(deleteProjectiles.begin(),
+				deleteProjectiles.end(),
+				projectile) != deleteProjectiles.end();
+
+			if (!pInList) {
+				deleteProjectiles.push_back(projectile);
+			}
+		}
+	}
+
+
+
+	for (auto const& enemy : enemies) {
+		for (auto const& projectile : projectiles) {
+			if (enemy->isOverlap(projectile)) {
+				bool pInList = std::find(deleteProjectiles.begin(),
+					deleteProjectiles.end(),
+					projectile) != deleteProjectiles.end();
+
+				if (!pInList) {
+					deleteProjectiles.push_back(projectile);
+				}
+
+
+				enemy->impacted();
+				points++;
+				textPoints->content = to_string(points);
+
+
+			}
+		}
+	}
+
+	for (auto const& enemy : enemies) {
+		if (enemy->state == game->stateDead) {
+			bool eInList = std::find(deleteEnemies.begin(),
+				deleteEnemies.end(),
+				enemy) != deleteEnemies.end();
+
+			if (!eInList) {
+				deleteEnemies.push_back(enemy);
+			}
+		}
+	}
+
+	for (auto const& delEnemy : deleteEnemies) {
+		enemies.remove(delEnemy);
+		space->removeDynamicActor(delEnemy);
+	}
+	deleteEnemies.clear();
+
+	for (auto const& delProjectile : deleteProjectiles) {
+		projectiles.remove(delProjectile);
+		space->removeDynamicActor(delProjectile);
+		delete delProjectile;
+	}
+	deleteProjectiles.clear();
+
+
+	cout << "update GameLayer" << endl;
+}
+
+void GameLayer::calculateScroll() {
+	// limite izquierda
+	if (player->x > WIDTH * 0.3) {
+		if (player->x - scrollX < WIDTH * 0.3) {
+			scrollX = player->x - WIDTH * 0.3;
+		}
+	}
+
+	// limite derecha
+	if (player->x < mapWidth - WIDTH * 0.3) {
+		if (player->x - scrollX > WIDTH * 0.7) {
+			scrollX = player->x - WIDTH * 0.7;
+		}
+	}
+}
+
+
+void GameLayer::draw() {
+	calculateScroll();
+
+	background->draw();
+	for (auto const& tile : tiles) {
+		tile->draw(scrollX);
+	}
+
+	for (auto const& projectile : projectiles) {
+		projectile->draw(scrollX);
+	}
+
+	player->draw(scrollX);
+	for (auto const& enemy : enemies) {
+		enemy->draw(scrollX);
+	}
+
+	backgroundPoints->draw();
+	textPoints->draw();
+	SDL_RenderPresent(game->renderer); // Renderiza
 }
 
 void GameLayer::keysToControls(SDL_Event event) {
@@ -93,6 +295,7 @@ void GameLayer::keysToControls(SDL_Event event) {
 			controlShoot = true;
 			break;
 		}
+
 
 	}
 	if (event.type == SDL_KEYUP) {
@@ -127,100 +330,4 @@ void GameLayer::keysToControls(SDL_Event event) {
 	}
 
 }
-
-void GameLayer::update() {
-
-	// Generar enemigos
-	newEnemyTime--;
-	if (newEnemyTime <= 0) {
-		int rX = (rand() % (600 - 500)) + 1 + 500;
-		int rY = (rand() % (300 - 60)) + 1 + 60;
-		enemies.push_back(new Enemy(rX, rY, game));
-		newEnemyTime = 110;
-	}
-
-	player->update();
-	for (auto const& enemy : enemies) {
-		enemy->update();
-	}
-
-	for (auto const& projectile : projectiles) {
-		projectile->update();
-	}
-
-	// Colisiones
-	for (auto const& enemy : enemies) {
-		if (player->isOverlap(enemy)) {
-			init();
-			return; // Cortar el for
-		}
-	}
-	// Colisiones , Enemy - Projectile
-
-	list<Enemy*> deleteEnemies;
-	list<Projectile*> deleteProjectiles;
-
-	for (auto const& enemy : enemies) {
-		for (auto const& projectile : projectiles) {
-			if (enemy->isOverlap(projectile)) {
-				bool pInList = std::find(deleteProjectiles.begin(),
-					deleteProjectiles.end(),
-					projectile) != deleteProjectiles.end();
-
-				if (!pInList) {
-					deleteProjectiles.push_back(projectile);
-				}
-
-				bool eInList = std::find(deleteEnemies.begin(),
-					deleteEnemies.end(),
-					enemy) != deleteEnemies.end();
-
-				if (!eInList) {
-					deleteEnemies.push_back(enemy);
-
-					points++;
-					textPoints->content = to_string(points);
-				}
-
-
-			}
-		}
-	}
-
-	for (auto const& delEnemy : deleteEnemies) {
-		enemies.remove(delEnemy);
-	}
-	deleteEnemies.clear();
-
-	for (auto const& delProjectile : deleteProjectiles) {
-		projectiles.remove(delProjectile);
-	}
-	deleteProjectiles.clear();
-
-
-	cout << "update GameLayer" << endl;
-
-
-}
-
-
-void GameLayer::draw() {
-	background->draw();
-
-	for (auto const& projectile : projectiles) {
-		projectile->draw();
-	}
-
-	player->draw();
-
-	for (auto const& enemy : enemies) {
-		enemy->draw();
-	}
-
-	textPoints->draw();
-	backgroundPoints->draw();
-
-	SDL_RenderPresent(game->renderer); // Renderiza
-}
-
 

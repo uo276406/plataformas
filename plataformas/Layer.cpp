@@ -2,5 +2,4 @@
 
 Layer::Layer(Game* game) {
 	this->game = game;
-	//Prueba
 }

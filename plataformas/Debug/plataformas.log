@@ -1,0 +1,9 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: El directorio intermedio (Debug\) contiene archivos compartidos de otro proyecto (NavesL4.vcxproj). Esto puede dar lugar a un comportamiento incorrecto de limpieza y recompilación.
+  GameLayer.cpp
+C:\Users\uo276406\Desktop\plataformas\plataformas\Audio.h(6,10): warning C4067: símbolos (token) inesperados después de la directiva del preprocesador; se esperaba una nueva línea
+C:\Users\uo276406\Desktop\plataformas\plataformas\GameLayer.cpp(19,66): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\uo276406\Desktop\plataformas\plataformas\GameLayer.cpp(50,13): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\uo276406\Desktop\plataformas\plataformas\GameLayer.cpp(51,13): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\uo276406\Desktop\plataformas\plataformas\GameLayer.cpp(236,24): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\uo276406\Desktop\plataformas\plataformas\GameLayer.cpp(243,24): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+  plataformas.vcxproj -> C:\Users\uo276406\Desktop\plataformas\Debug\plataformas.exe
