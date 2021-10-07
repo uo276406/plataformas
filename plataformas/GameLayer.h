@@ -12,6 +12,8 @@
 #include "Audio.h"
 #include "Space.h" // importar
 
+#include "Pad.h"
+
 #include <fstream> // Leer ficheros
 #include <sstream> // Leer líneas / String
 #include <list>
@@ -24,7 +26,10 @@ public:
 	void processControls() override;
 	void update() override;
 	void draw() override;
+	
 	void keysToControls(SDL_Event event);
+	void mouseToControls(SDL_Event event); // USO DE MOUSE
+	
 	void loadMap(string name);
 	void loadMapObject(char character, float x, float y);
 	void calculateScroll();
@@ -42,11 +47,16 @@ public:
 	Actor* backgroundPoints;
 	list<Enemy*> enemies;
 	list<Projectile*> projectiles;
-
+	Tile* cup; // Elemento de final de nivel
+	
 	bool controlShoot = false;
 	int controlMoveY = 0;
 	int controlMoveX = 0;
 
+	// Elementos de interfaz
+	Actor* buttonJump;
+	Actor* buttonShoot;
+	Pad* pad;
 
 };
 

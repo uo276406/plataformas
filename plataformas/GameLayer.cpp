@@ -8,6 +8,11 @@ GameLayer::GameLayer(Game* game)
 
 
 void GameLayer::init() {
+
+	pad = new Pad(WIDTH * 0.15, HEIGHT * 0.80, game);
+	buttonJump = new Actor("res/boton_salto.png", WIDTH * 0.9, HEIGHT * 0.55, 100, 100, game);
+	buttonShoot = new Actor("res/boton_disparo.png", WIDTH * 0.75, HEIGHT * 0.83, 100, 100, game);
+
 	space = new Space(1);
 	scrollX = 0;
 	tiles.clear();
@@ -27,7 +32,7 @@ void GameLayer::init() {
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 
-	loadMap("res/0.txt");
+	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 }
 
 void GameLayer::loadMap(string name) {
@@ -61,6 +66,13 @@ void GameLayer::loadMap(string name) {
 void GameLayer::loadMapObject(char character, float x, float y)
 {
 	switch (character) {
+	case 'C': {
+		cup = new Tile("res/copa.png", x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		cup->y = cup->y - cup->height / 2;
+		space->addDynamicActor(cup); // Realmente no hace falta
+		break;
+	}
 	case 'E': {
 		Enemy* enemy = new Enemy(x, y, game);
 		// modificación para empezar a contar desde el suelo.
@@ -92,7 +104,21 @@ void GameLayer::processControls() {
 	// obtener controles
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
-		keysToControls(event);
+		// Cambio automático de input
+		if (event.type == SDL_KEYDOWN) {
+			game->input = game->inputKeyboard;
+		}
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			game->input = game->inputMouse;
+		}
+
+		if (game->input == game->inputKeyboard) {
+			keysToControls(event);
+		}
+		if (game->input == game->inputMouse) {
+			mouseToControls(event);
+		}
+
 	}
 	//procesar controles
 	//procesar controles
@@ -127,12 +153,82 @@ void GameLayer::processControls() {
 	else {
 
 	}
-
-
-
 }
 
+void GameLayer::mouseToControls(SDL_Event event) {
+	// Modificación de coordenadas por posible escalado
+	float motionX = event.motion.x / game->scaleLower;
+	float motionY = event.motion.y / game->scaleLower;
+	// Cada vez que hacen click
+	if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (pad->containsPoint(motionX, motionY)) {
+			pad->clicked = true;
+			// CLICK TAMBIEN TE MUEVE
+			controlMoveX = pad->getOrientationX(motionX);
+		}
+
+		if (buttonShoot->containsPoint(motionX, motionY)) {
+			controlShoot = true;
+		}
+		if (buttonJump->containsPoint(motionX, motionY)) {
+			controlMoveY = -1;
+		}
+
+	}
+	// Cada vez que se mueve
+	if (event.type == SDL_MOUSEMOTION) {
+		if (pad->clicked && pad->containsPoint(motionX, motionY)) {
+			controlMoveX = pad->getOrientationX(motionX);
+			// Rango de -20 a 20 es igual que 0
+			if (controlMoveX > -20 && controlMoveX < 20) {
+				controlMoveX = 0;
+			}
+
+		}
+		else {
+			pad->clicked = false; // han sacado el ratón del pad
+			controlMoveX = 0;
+		}
+
+		if (buttonShoot->containsPoint(motionX, motionY) == false) {
+			controlShoot = false;
+		}
+		if (buttonJump->containsPoint(motionX, motionY) == false) {
+			controlMoveY = 0;
+		}
+
+	}
+	// Cada vez que levantan el click
+	if (event.type == SDL_MOUSEBUTTONUP) {
+		if (pad->containsPoint(motionX, motionY)) {
+			pad->clicked = false;
+			// LEVANTAR EL CLICK TAMBIEN TE PARA
+			controlMoveX = 0;
+		}
+
+		if (buttonShoot->containsPoint(motionX, motionY)) {
+			controlShoot = false;
+		}
+		if (buttonJump->containsPoint(motionX, motionY)) {
+			controlMoveY = 0;
+		}
+
+	}
+}
+
+
 void GameLayer::update() {
+
+	// Nivel superado
+	if (cup->isOverlap(player)) {
+		game->currentLevel++;
+		if (game->currentLevel > game->finalLevel) {
+			game->currentLevel = 0;
+		}
+		init();
+	}
+
+
 	// Jugador se cae
 	if (player->y > HEIGHT + 80) {
 		init();
@@ -258,13 +354,24 @@ void GameLayer::draw() {
 		projectile->draw(scrollX);
 	}
 
+	cup->draw(scrollX);
 	player->draw(scrollX);
+	
 	for (auto const& enemy : enemies) {
 		enemy->draw(scrollX);
 	}
 
 	backgroundPoints->draw();
 	textPoints->draw();
+
+	// HUD
+	if (game->input == game->inputMouse) {
+		buttonJump->draw(); // NO TIENEN SCROLL, POSICION FIJA
+		buttonShoot->draw(); // NO TIENEN SCROLL, POSICION FIJA
+		pad->draw(); // NO TIENEN SCROLL, POSICION FIJA
+	}
+
+
 	SDL_RenderPresent(game->renderer); // Renderiza
 }
 
