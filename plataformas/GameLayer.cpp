@@ -24,12 +24,18 @@ void GameLayer::init() {
 	textPoints = new Text("hola", WIDTH * 0.92, HEIGHT * 0.04, game);
 	textPoints->content = to_string(points);
 
-	
+	pointsRecolectable = 0;
+	textPointsRecolectable = new Text("hola", WIDTH * 0.92, HEIGHT * 0.14, game);
+	textPointsRecolectable->content = to_string(pointsRecolectable);
+
 	background = new Background("res/fondo_2.png", WIDTH * 0.5, HEIGHT * 0.5, -1, game);
 	backgroundPoints = new Actor("res/icono_puntos.png",
 		WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
 
+	recolectable = new Item(WIDTH * 0.85, HEIGHT * 0.15, game);
+
 	enemies.clear(); // Vaciar por si reiniciamos el juego
+	recolectables.clear();
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
@@ -71,6 +77,14 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		// modificación para empezar a contar desde el suelo.
 		cup->y = cup->y - cup->height / 2;
 		space->addDynamicActor(cup); // Realmente no hace falta
+		break;
+	}
+	case 'R': {
+		Tile* recolectable = new Tile("res/icono_recolectable.png", x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		recolectable->y = recolectable->y - recolectable->height / 2;
+		recolectables.push_back(recolectable);
+		space->addDynamicActor(recolectable); // Realmente no hace falta
 		break;
 	}
 	case 'E': {
@@ -273,6 +287,31 @@ void GameLayer::update() {
 		}
 	}
 
+	//Colisiones, Player - Recolectable
+	list<Tile*> deleteRecolectables;
+	for (auto const& recolectable : recolectables) {
+		if (player->isOverlap(recolectable)) {
+			bool rInList = std::find(deleteRecolectables.begin(),
+				deleteRecolectables.end(),
+				recolectable) != deleteRecolectables.end();
+
+			if (!rInList) {
+				deleteRecolectables.push_back(recolectable);
+			}
+
+
+			pointsRecolectable++;
+			if (pointsRecolectable % 4 == 0) {
+				textPointsRecolectable->content = to_string(pointsRecolectable/4);
+				this->recolectable->idle->currentFrame = 2;
+			}
+
+			this->recolectable->update();
+
+		}
+
+	}
+
 	// Colisiones , Enemy - Projectile
 	//				Player(saltando) - enemy
 
@@ -319,6 +358,12 @@ void GameLayer::update() {
 		}
 	}
 
+	for (auto const& delRecolectable : deleteRecolectables) {
+		recolectables.remove(delRecolectable);
+		space->removeDynamicActor(delRecolectable);
+	}
+	deleteRecolectables.clear();
+
 	for (auto const& delEnemy : deleteEnemies) {
 		enemies.remove(delEnemy);
 		space->removeDynamicActor(delEnemy);
@@ -361,6 +406,10 @@ void GameLayer::draw() {
 		tile->draw(scrollX);
 	}
 
+	for (auto const& recolectable : recolectables) {
+		recolectable->draw(scrollX);
+	}
+
 	for (auto const& projectile : projectiles) {
 		projectile->draw(scrollX);
 	}
@@ -374,6 +423,9 @@ void GameLayer::draw() {
 
 	backgroundPoints->draw();
 	textPoints->draw();
+
+	textPointsRecolectable->draw();
+	recolectable->draw();
 
 	// HUD
 	if (game->input == game->inputMouse) {
