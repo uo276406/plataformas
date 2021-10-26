@@ -38,6 +38,9 @@ public:
 	float scrollX;
 	int mapWidth;
 	list<Tile*> tiles;
+	
+	list<Tile*> destructibles;
+	int destructionTime = 9;
 
 	Audio* audioBackground;
 	Text* textPoints;

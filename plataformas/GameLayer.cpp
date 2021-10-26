@@ -37,6 +37,7 @@ void GameLayer::init() {
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	recolectables.clear();
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
+	destructibles.clear();
 
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 }
@@ -84,7 +85,15 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		// modificación para empezar a contar desde el suelo.
 		recolectable->y = recolectable->y - recolectable->height / 2;
 		recolectables.push_back(recolectable);
-		space->addDynamicActor(recolectable); // Realmente no hace falta
+		space->addDynamicActor(recolectable); 
+		break;
+	}
+	case 'W': {
+		Tile* destructible = new Tile("res/bloque_metal.png", x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		destructible->y = destructible->y - destructible->height / 2;
+		destructibles.push_back(destructible);
+		space->addStaticActor(destructible); 
 		break;
 	}
 	case 'E': {
@@ -346,6 +355,31 @@ void GameLayer::update() {
 		}
 	}
 
+	//Tiles destructibles
+	list<Tile*> deleteDestructibles;
+	for (auto const& destructible : destructibles) {
+
+		if ((player->y - destructible->y) < 10 && 
+			abs(player->x - destructible->x) < 10 &&
+			destructionTime % 10 == 0) {
+
+			space->addDynamicActor(destructible);
+			space->removeStaticActor(destructible);
+
+			bool dInList = std::find(deleteDestructibles.begin(),
+				deleteDestructibles.end(),
+				destructible) != deleteDestructibles.end();
+
+			if (!dInList) {
+				deleteDestructibles.push_back(destructible);
+			}
+
+			destructionTime = 10;
+		}
+	}
+
+	destructionTime--;
+
 	for (auto const& enemy : enemies) {
 		if (enemy->state == game->stateDead) {
 			bool eInList = std::find(deleteEnemies.begin(),
@@ -363,6 +397,12 @@ void GameLayer::update() {
 		space->removeDynamicActor(delRecolectable);
 	}
 	deleteRecolectables.clear();
+
+	for (auto const& delDestructible : deleteDestructibles) {
+		destructibles.remove(delDestructible);
+		space->removeDynamicActor(delDestructible);
+	}
+	deleteDestructibles.clear();
 
 	for (auto const& delEnemy : deleteEnemies) {
 		enemies.remove(delEnemy);
@@ -408,6 +448,10 @@ void GameLayer::draw() {
 
 	for (auto const& recolectable : recolectables) {
 		recolectable->draw(scrollX);
+	}
+
+	for (auto const& destructible : destructibles) {
+		destructible->draw(scrollX);
 	}
 
 	for (auto const& projectile : projectiles) {
