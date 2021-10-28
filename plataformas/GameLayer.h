@@ -36,6 +36,7 @@ public:
 	void calculateScroll();
 	Space* space;
 	float scrollX;
+	float scrollY;
 	int mapWidth;
 	list<Tile*> tiles;
 	
@@ -66,7 +67,7 @@ public:
 	// Elementos de interfaz
 	Actor* buttonJump;
 	Actor* buttonShoot;
-	Pad* pad;
+	Pad* pad; 
 
 };
 

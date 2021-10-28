@@ -15,6 +15,7 @@ void GameLayer::init() {
 
 	space = new Space(1);
 	scrollX = 0;
+	scrollY = 0;
 	tiles.clear();
 
 	audioBackground = new Audio("res/musica_ambiente.mp3", true);
@@ -435,6 +436,20 @@ void GameLayer::calculateScroll() {
 			scrollX = player->x - WIDTH * 0.7;
 		}
 	}
+
+	// limite abajo
+	if (player->y > HEIGHT * 0.3) {
+		if (player->y - scrollY < HEIGHT * 0.3) {
+			scrollY = player->y - HEIGHT * 0.3;
+		}
+	}
+
+	// limite arriba
+	if (player->y < mapWidth - HEIGHT * 0.3) {
+		if (player->y - scrollY > HEIGHT * 0.7) {
+			scrollY = player->y - HEIGHT * 0.7;
+		}
+	}
 }
 
 
@@ -443,26 +458,26 @@ void GameLayer::draw() {
 
 	background->draw();
 	for (auto const& tile : tiles) {
-		tile->draw(scrollX);
+		tile->draw(scrollX, scrollY);
 	}
 
 	for (auto const& recolectable : recolectables) {
-		recolectable->draw(scrollX);
+		recolectable->draw(scrollX, scrollY);
 	}
 
 	for (auto const& destructible : destructibles) {
-		destructible->draw(scrollX);
+		destructible->draw(scrollX, scrollY);
 	}
 
 	for (auto const& projectile : projectiles) {
-		projectile->draw(scrollX);
+		projectile->draw(scrollX, scrollY);
 	}
 
-	cup->draw(scrollX);
-	player->draw(scrollX);
+	cup->draw(scrollX, scrollY);
+	player->draw(scrollX, scrollY);
 	
 	for (auto const& enemy : enemies) {
-		enemy->draw(scrollX);
+		enemy->draw(scrollX, scrollY);
 	}
 
 	backgroundPoints->draw();
