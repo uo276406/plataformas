@@ -245,10 +245,24 @@ void GameLayer::update() {
 	}
 
 
-	// Colisiones
 	for (auto const& enemy : enemies) {
-		if (player->isOverlap(enemy)) {
-			player->loseLife();
+
+		if (player->vy > 0 && player->y < enemy->y
+			&& player->isOverlap(enemy)
+			&& player->lifes > 0 && enemy->state != game->stateDead) {
+
+			enemy->impacted();
+			player->lifes++;
+			player->invulnerableTime = 0;
+			points++;
+			textPoints->content = to_string(points);
+			player->onAir = false;
+			player->jump();
+		}
+
+		if (player->isOverlap(enemy) && enemy->state != game->stateDead) {
+				player->loseLife();
+				
 			if (player->lifes <= 0) {
 				init();
 				return;
@@ -256,7 +270,6 @@ void GameLayer::update() {
 		}
 	}
 
-	// Colisiones , Enemy - Projectile
 
 	list<Enemy*> deleteEnemies;
 	list<Projectile*> deleteProjectiles;
@@ -273,7 +286,8 @@ void GameLayer::update() {
 		}
 	}
 
-
+	// Colisiones , Enemy - Projectile
+	//				Player(saltando) - enemy
 
 	for (auto const& enemy : enemies) {
 		for (auto const& projectile : projectiles) {
