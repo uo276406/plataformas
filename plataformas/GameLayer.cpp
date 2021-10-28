@@ -247,7 +247,20 @@ void GameLayer::update() {
 
 	for (auto const& enemy : enemies) {
 
-		if (player->isOverlap(enemy)) {
+		if (player->vy > 0 && player->y < enemy->y
+			&& player->isOverlap(enemy)
+			&& player->lifes > 0 && enemy->state != game->stateDead) {
+
+			enemy->impacted();
+			player->lifes++;
+			player->invulnerableTime = 0;
+			points++;
+			textPoints->content = to_string(points);
+			player->onAir = false;
+			player->jump();
+		}
+
+		if (player->isOverlap(enemy) && enemy->state != game->stateDead) {
 				player->loseLife();
 				
 			if (player->lifes <= 0) {
@@ -294,16 +307,6 @@ void GameLayer::update() {
 
 
 			}
-		}
-		if (player->vy > 0 && player->y < enemy->y
-			&& player->isOverlap(enemy)
-			&& player->lifes > 0) {
-
-			enemy->impacted();
-			player->lifes++;
-			player->invulnerableTime = 0;
-			points++;
-			textPoints->content = to_string(points);
 		}
 	}
 
