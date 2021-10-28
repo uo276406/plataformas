@@ -11,6 +11,7 @@
 
 #include "Audio.h"
 #include "Space.h" // importar
+#include "Item.h"
 
 #include "Pad.h"
 
@@ -35,17 +36,27 @@ public:
 	void calculateScroll();
 	Space* space;
 	float scrollX;
+	float scrollY;
 	int mapWidth;
 	list<Tile*> tiles;
+	
+	list<Tile*> destructibles;
+	int destructionTime = 9;
 
 	Audio* audioBackground;
 	Text* textPoints;
 	int points;
+
+	Text* textPointsRecolectable;
+	int pointsRecolectable;
+	Item* recolectable;
+
 	int newEnemyTime = 0;
 	Player* player;
 	Background* background;
 	Actor* backgroundPoints;
 	list<Enemy*> enemies;
+	list<Tile*> recolectables;
 	list<Projectile*> projectiles;
 	Tile* cup; // Elemento de final de nivel
 	
@@ -56,7 +67,7 @@ public:
 	// Elementos de interfaz
 	Actor* buttonJump;
 	Actor* buttonShoot;
-	Pad* pad;
+	Pad* pad; 
 
 };
 

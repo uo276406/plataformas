@@ -1,4 +1,6 @@
+#include "Actor.h"
 #include "Enemy.h"
+
 
 Enemy::Enemy(float x, float y, Game* game)
 	: Actor("res/enemigo.png", x, y, 36, 40, game) {
@@ -61,8 +63,8 @@ void Enemy::impacted() {
 }
 
 
-void Enemy::draw(float scrollX) {
-	animation->draw(x - scrollX, y);
+void Enemy::draw(float scrollX, float scrollY) {
+	animation->draw(x - scrollX, y-scrollY);
 }
 
 
