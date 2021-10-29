@@ -134,7 +134,7 @@ Projectile* Player::shoot() {
 		aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
 		aShootingRight->currentFrame = 0; //"Rebobinar" aniamción
 		shootTime = shootCadence;
-		Projectile* projectile = new Projectile(x, y, game);
+		Projectile* projectile = new Projectile("res/disparo_jugador2.png", x, y, game);
 		if (orientation == game->orientationLeft) {
 			projectile->vx = projectile->vx * -1; // Invertir
 		}
@@ -145,13 +145,14 @@ Projectile* Player::shoot() {
 	}
 }
 
-void Player::draw(float scrollX) {
+void Player::draw(float scrollX, float scrollY) {
 	if (invulnerableTime == 0) {
-		animation->draw(x - scrollX, y);
+		animation->draw(x - scrollX, y- scrollY);
 	}
 	else {
 		if (invulnerableTime % 10 >= 0 && invulnerableTime % 10 <= 5) {
-			animation->draw(x - scrollX, y);
+			animation->draw(x - scrollX, y- scrollY);
+
 		}
 	}
 }

@@ -1,16 +1,12 @@
+#include "Actor.h"
 #include "Enemy.h"
 
-Enemy::Enemy(float x, float y, Game* game)
-	: Actor("res/enemigo.png", x, y, 36, 40, game) {
+
+Enemy::Enemy(string filename, float x, float y, Game* game)
+	: Actor(filename, x, y, 36, 40, game) {
 
 	state = game->stateMoving;
 
-	aDying = new Animation("res/enemigo_morir.png", width, height,
-		280, 40, 6, 8, false, game);
-
-	aMoving = new Animation("res/enemigo_movimiento.png", width, height,
-		108, 40, 6, 3, true, game);
-	animation = aMoving;
 
 	vx = 1;
 	vxIntelligence = -1;
@@ -61,8 +57,11 @@ void Enemy::impacted() {
 }
 
 
-void Enemy::draw(float scrollX) {
-	animation->draw(x - scrollX, y);
+void Enemy::draw(float scrollX, float scrollY) {
+}
+
+Projectile* Enemy::shoot() {
+	return NULL;
 }
 
 
