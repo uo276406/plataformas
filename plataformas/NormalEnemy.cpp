@@ -1,12 +1,14 @@
-#include "Actor.h"
-#include "Enemy.h"
-
-
-Enemy::Enemy(string filename, float x, float y, Game* game)
-	: Actor(filename, x, y, 36, 40, game) {
+#include "NormalEnemy.h"
+NormalEnemy::NormalEnemy(float x, float y, Game* game)
+	: Enemy("res/enemigo.png", x, y, game) {
 
 	state = game->stateMoving;
 
+	aDying = new Animation("res/enemigo_morir.png", width, height,
+		280, 40, 6, 8, false, game);
+	aMoving = new Animation("res/enemigo_movimiento.png", width, height,
+		108, 40, 6, 3, true, game);
+	animation = aMoving;
 
 	vx = 1;
 	vxIntelligence = -1;
@@ -14,7 +16,7 @@ Enemy::Enemy(string filename, float x, float y, Game* game)
 
 }
 
-void Enemy::update() {
+void NormalEnemy::update() {
 	// Actualizar la animación
 	bool endAnimation = animation->update();
 
@@ -46,21 +48,13 @@ void Enemy::update() {
 		vx = 0;
 	}
 
-
-
 }
 
-void Enemy::impacted() {
-	if (state != game->stateDying) {
-		state = game->stateDying;
-	}
+void NormalEnemy::draw(float scrollX, float scrollY) {
+	animation->draw(x - scrollX, y - scrollY);
 }
 
-
-void Enemy::draw(float scrollX, float scrollY) {
-}
-
-Projectile* Enemy::shoot() {
+Projectile* NormalEnemy::shoot() {
 	return NULL;
 }
 

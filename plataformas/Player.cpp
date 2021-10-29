@@ -134,7 +134,7 @@ Projectile* Player::shoot() {
 		aShootingLeft->currentFrame = 0; //"Rebobinar" aniamción
 		aShootingRight->currentFrame = 0; //"Rebobinar" aniamción
 		shootTime = shootCadence;
-		Projectile* projectile = new Projectile(x, y, game);
+		Projectile* projectile = new Projectile("res/disparo_jugador2.png", x, y, game);
 		if (orientation == game->orientationLeft) {
 			projectile->vx = projectile->vx * -1; // Invertir
 		}

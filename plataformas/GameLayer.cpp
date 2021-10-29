@@ -98,7 +98,15 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		break;
 	}
 	case 'E': {
-		Enemy* enemy = new Enemy(x, y, game);
+		Enemy* enemy = new NormalEnemy(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		enemy->y = enemy->y - enemy->height / 2;
+		enemies.push_back(enemy);
+		space->addDynamicActor(enemy);
+		break;
+	}
+	case 'S': {
+		Enemy* enemy = new ShootEnemy(x, y, game);
 		// modificación para empezar a contar desde el suelo.
 		enemy->y = enemy->y - enemy->height / 2;
 		enemies.push_back(enemy);
@@ -263,7 +271,16 @@ void GameLayer::update() {
 	player->update();
 	for (auto const& enemy : enemies) {
 		enemy->update();
+
+		Projectile* newProjectile = enemy->shoot();
+		if (newProjectile != NULL && enemy->enemyShootCadence == 0) {
+			space->addDynamicActor(newProjectile);
+			enemyProjectiles.push_back(newProjectile);
+			enemy->enemyShootCadence = 30;
+		}
+		enemy->enemyShootCadence--;
 	}
+
 	for (auto const& projectile : projectiles) {
 		projectile->update();
 	}
@@ -271,7 +288,20 @@ void GameLayer::update() {
 
 	for (auto const& enemy : enemies) {
 
-		if (player->isOverlap(enemy)) {
+		if (player->vy > 0 && player->y < enemy->y
+			&& player->isOverlap(enemy)
+			&& player->lifes > 0 && enemy->state != game->stateDead) {
+
+			enemy->impacted();
+			player->lifes++;
+			player->invulnerableTime = 0;
+			points++;
+			textPoints->content = to_string(points);
+			player->onAir = false;
+			player->jump();
+		}
+
+		if (player->isOverlap(enemy) && enemy->state != game->stateDead) {
 				player->loseLife();
 				
 			if (player->lifes <= 0) {
@@ -286,6 +316,19 @@ void GameLayer::update() {
 	list<Projectile*> deleteProjectiles;
 	for (auto const& projectile : projectiles) {
 		if (projectile->isInRender(scrollX) == false || projectile->vx == 0) {
+
+			bool pInList = std::find(deleteProjectiles.begin(),
+				deleteProjectiles.end(),
+				projectile) != deleteProjectiles.end();
+
+			if (!pInList) {
+				deleteProjectiles.push_back(projectile);
+			}
+		}
+	}
+	
+	for (auto const& projectile : enemyProjectiles) {
+		if ( projectile->vx == 0) {
 
 			bool pInList = std::find(deleteProjectiles.begin(),
 				deleteProjectiles.end(),
@@ -322,6 +365,7 @@ void GameLayer::update() {
 
 	}
 
+
 	// Colisiones , Enemy - Projectile
 	//				Player(saltando) - enemy
 
@@ -343,16 +387,6 @@ void GameLayer::update() {
 
 
 			}
-		}
-		if (player->vy > 0 && player->y < enemy->y
-			&& player->isOverlap(enemy)
-			&& player->lifes > 0) {
-
-			enemy->impacted();
-			player->lifes++;
-			player->invulnerableTime = 0;
-			points++;
-			textPoints->content = to_string(points);
 		}
 	}
 
@@ -413,6 +447,7 @@ void GameLayer::update() {
 
 	for (auto const& delProjectile : deleteProjectiles) {
 		projectiles.remove(delProjectile);
+		enemyProjectiles.remove(delProjectile);
 		space->removeDynamicActor(delProjectile);
 		delete delProjectile;
 	}
@@ -470,6 +505,10 @@ void GameLayer::draw() {
 	}
 
 	for (auto const& projectile : projectiles) {
+		projectile->draw(scrollX, scrollY);
+	}
+
+	for (auto const& projectile : enemyProjectiles) {
 		projectile->draw(scrollX, scrollY);
 	}
 

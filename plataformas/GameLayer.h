@@ -5,6 +5,8 @@
 #include "Background.h"
 
 #include "Enemy.h"
+#include "NormalEnemy.h"
+#include "ShootEnemy.h"
 #include "Projectile.h"
 #include "Text.h"
 #include "Tile.h"
@@ -68,6 +70,8 @@ public:
 	Actor* buttonJump;
 	Actor* buttonShoot;
 	Pad* pad; 
+
+	list<Projectile*> enemyProjectiles;
 
 };
 
